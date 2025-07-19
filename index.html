@@ -45,7 +45,7 @@
             background-color: #34495e;
             padding: 0;
             position: sticky;
-            top: 120px;
+            top: 80px;
             z-index: 99;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
@@ -636,10 +636,82 @@
         
         /* Responsive */
         @media (max-width: 768px) {
+            /* Header adjustments */
+            .header {
+                padding: 20px 10px;
+                position: relative;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .header p {
+                font-size: 1em;
+            }
+            
+            /* Navigation mobile menu */
+            .nav {
+                position: relative;
+                top: 0;
+                max-height: 300px;
+                overflow-y: auto;
+            }
+            
             .nav ul {
                 flex-direction: column;
             }
             
+            .nav a {
+                padding: 12px 20px;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+            
+            /* Container adjustments */
+            .container {
+                padding: 20px 15px;
+                margin-top: 0;
+            }
+            
+            /* Section adjustments */
+            .section {
+                padding: 20px 15px;
+                margin-bottom: 20px;
+            }
+            
+            /* Table responsiveness */
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            /* Gantt chart */
+            .gantt-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            /* Stats grid */
+            .stats {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            /* Risk matrix */
+            .risk-matrix {
+                grid-template-columns: 80px repeat(3, 1fr);
+                gap: 5px;
+                font-size: 12px;
+            }
+            
+            .risk-cell {
+                padding: 10px 5px;
+                font-size: 11px;
+            }
+            
+            /* Timeline adjustments */
             .timeline::before {
                 left: 30px;
             }
@@ -657,6 +729,149 @@
                 position: static;
                 transform: none;
                 margin-bottom: 10px;
+            }
+            
+            /* Chatbot adjustments */
+            #chatbot-window {
+                width: 100% !important;
+                max-width: 400px;
+                right: 0 !important;
+                left: 0 !important;
+                margin: 0 auto;
+                bottom: 70px !important;
+                height: calc(100vh - 100px) !important;
+                max-height: 600px;
+            }
+            
+            #chatbot-icon {
+                width: 50px;
+                height: 50px;
+                bottom: 10px;
+                right: 10px;
+            }
+            
+            /* Search box */
+            .search-box {
+                margin-bottom: 20px;
+            }
+            
+            .search-box input {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+            
+            .search-box button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            
+            /* Cards */
+            .card {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            /* Phase cards */
+            .phase-card {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            /* Buttons */
+            .btn {
+                padding: 8px 20px;
+                font-size: 14px;
+            }
+            
+            /* Legend */
+            .legend {
+                gap: 10px;
+                padding: 10px;
+            }
+            
+            .legend-item {
+                font-size: 12px;
+            }
+            
+            /* Tooltips - disable on mobile */
+            .tooltip .tooltip-text {
+                display: none;
+            }
+            
+            /* Code blocks */
+            code {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+            
+            /* Checklist items */
+            .checklist li {
+                padding: 8px 0;
+                font-size: 14px;
+            }
+            
+            .checkbox {
+                width: 18px;
+                height: 18px;
+                margin-right: 10px;
+            }
+            
+            /* Progress bars */
+            .progress-bar {
+                height: 25px;
+                margin: 15px 0;
+            }
+            
+            .progress-fill {
+                font-size: 12px;
+            }
+            
+            /* Typography adjustments */
+            h2 {
+                font-size: 1.5em;
+            }
+            
+            h3 {
+                font-size: 1.2em;
+            }
+            
+            h4 {
+                font-size: 1.1em;
+            }
+            
+            /* Icon size */
+            .icon {
+                width: 25px;
+                height: 25px;
+                font-size: 14px;
+            }
+        }
+        
+        /* Small mobile devices */
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .nav a {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+            
+            .section {
+                padding: 15px 10px;
+            }
+            
+            .container {
+                padding: 15px 10px;
+            }
+            
+            /* Hide less important columns in tables on very small screens */
+            @media (max-width: 480px) {
+                td:nth-child(4), th:nth-child(4),
+                td:nth-child(5), th:nth-child(5) {
+                    display: none;
+                }
             }
         }
     </style>
