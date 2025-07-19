@@ -1,0 +1,2988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Automation Project Playbook</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        /* Navigation */
+        .nav {
+            background-color: #34495e;
+            padding: 0;
+            position: sticky;
+            top: 120px;
+            z-index: 99;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .nav li {
+            margin: 0;
+        }
+        
+        .nav a {
+            display: block;
+            padding: 15px 25px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .nav a:hover,
+        .nav a.active {
+            background-color: #3498db;
+            transform: translateY(-2px);
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        /* Section Styles */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+            transition: transform 0.3s ease;
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #3498db;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section h3 {
+            color: #34495e;
+            margin: 25px 0 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Icon Styles */
+        .icon {
+            width: 30px;
+            height: 30px;
+            background-color: #3498db;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ecf0f1;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        /* Card Styles */
+        .card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            border-color: #3498db;
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.1);
+        }
+        
+        .card-header {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        /* Phase Cards */
+        .phase-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-left: 5px solid;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .phase-1 { border-left-color: #3498db; }
+        .phase-2 { border-left-color: #9b59b6; }
+        .phase-3 { border-left-color: #27ae60; }
+        .phase-4 { border-left-color: #f39c12; }
+        .phase-5 { border-left-color: #e74c3c; }
+        
+        .phase-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .phase-content {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .phase-card.expanded .phase-content {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 1000px; }
+        }
+        
+        /* Progress Bar */
+        .progress-bar {
+            background-color: #e9ecef;
+            border-radius: 10px;
+            height: 30px;
+            margin: 20px 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #3498db 0%, #2ecc71 100%);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th {
+            background-color: #34495e;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 500;
+        }
+        
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* Risk Matrix */
+        .risk-matrix {
+            display: grid;
+            grid-template-columns: 100px repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .risk-cell {
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .risk-low { background-color: #27ae60; }
+        .risk-medium { background-color: #f39c12; }
+        .risk-high { background-color: #e74c3c; }
+        .risk-critical { background-color: #c0392b; }
+        
+        /* Checklist */
+        .checklist {
+            list-style: none;
+            margin: 20px 0;
+        }
+        
+        .checklist li {
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .checklist li:hover {
+            background-color: #f8f9fa;
+            padding-left: 10px;
+        }
+        
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #3498db;
+            border-radius: 4px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .checkbox.checked {
+            background-color: #3498db;
+            border-color: #3498db;
+        }
+        
+        .checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+        }
+        
+        .milestone {
+            width: 16px;
+            height: 16px;
+            background-color: #e74c3c;
+            transform: rotate(45deg);
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .milestone-label {
+            position: absolute;
+            top: -20px;
+            left: -40px;
+            width: 100px;
+            text-align: center;
+            font-size: 9px;
+            color: #e74c3c;
+            transform: rotate(-45deg);
+        }
+        
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: #3498db;
+            transform: translateX(-50%);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin: 30px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .timeline-item:nth-child(odd) {
+            flex-direction: row-reverse;
+        }
+        
+        .timeline-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 45%;
+            position: relative;
+        }
+        
+        .timeline-date {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            white-space: nowrap;
+            z-index: 1;
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 10px 25px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .btn-secondary {
+            background-color: #95a5a6;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+        
+        /* Search Box */
+        .search-box {
+            position: relative;
+            margin-bottom: 30px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 15px 45px 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 30px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .search-box button {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box button:hover {
+            background-color: #2980b9;
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+        
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            border-radius: 6px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Gantt Chart Styles */
+        .gantt-container {
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
+        
+        .task-id {
+            color: #7f8c8d;
+            font-weight: bold;
+            width: 40px;
+        }
+        
+        .task-name {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .subtask {
+            padding-left: 20px;
+            color: #555;
+        }
+        
+        .phase td {
+            padding: 8px 6px;
+        }
+        
+        .resources {
+            color: #7f8c8d;
+            font-size: 10px;
+        }
+        
+        .dependencies {
+            color: #e74c3c;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .bar {
+            height: 16px;
+            border-radius: 3px;
+            position: relative;
+            margin: 1px 0;
+            display: flex;
+            align-items: center;
+            font-size: 9px;
+            color: white;
+            padding: 0 4px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        
+        .bar-discovery { background-color: #3498db; }
+        .bar-testing { background-color: #9b59b6; }
+        .bar-implementation { background-color: #27ae60; }
+        .bar-expansion { background-color: #f39c12; }
+        .bar-chatbot { background-color: #e74c3c; }
+        .bar-critical { 
+            background-color: #c0392b;
+            border: 2px solid #a93226;
+        }
+        
+        .critical-path {
+            background-color: #ffe5e5;
+        }
+        
+        .week-cell {
+            width: 20px;
+            padding: 2px !important;
+            text-align: center;
+            border-left: 1px solid #ecf0f1;
+        }
+        
+        .month-start {
+            border-left: 2px solid #34495e;
+        }
+        
+        .deliverable {
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 10px;
+        }
+        
+        th.month {
+            text-align: center;
+            background-color: #2c3e50;
+        }
+        
+        /* Legend Styles */
+        .legend {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 12px;
+            border-radius: 3px;
+        }
+        
+        /* Print Styles */
+        @media print {
+            .nav, .header, .search-box {
+                display: none;
+            }
+            
+            .section {
+                display: block !important;
+                page-break-inside: avoid;
+            }
+            
+            body {
+                background-color: white;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav ul {
+                flex-direction: column;
+            }
+            
+            .timeline::before {
+                left: 30px;
+            }
+            
+            .timeline-item {
+                flex-direction: column !important;
+                margin-left: 50px;
+            }
+            
+            .timeline-content {
+                width: 100%;
+            }
+            
+            .timeline-date {
+                position: static;
+                transform: none;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Invoice Automation Project Playbook</h1>
+        <p>Complete Implementation Guide & Interactive Toolkit</p>
+    </div>
+    
+    <nav class="nav">
+        <ul>
+            <li><a href="#" class="nav-link active" data-section="about">About</a></li>
+            <li><a href="#" class="nav-link" data-section="overview">Overview</a></li>
+            <li><a href="#" class="nav-link" data-section="phases">Project Phases</a></li>
+            <li><a href="#" class="nav-link" data-section="timeline">Timeline</a></li>
+            <li><a href="#" class="nav-link" data-section="gantt">Gantt Chart</a></li>
+            <li><a href="#" class="nav-link" data-section="validation">Validation Plan</a></li>
+            <li><a href="#" class="nav-link" data-section="kpis">KPIs & Metrics</a></li>
+            <li><a href="#" class="nav-link" data-section="risks">Risk Management</a></li>
+            <li><a href="#" class="nav-link" data-section="resources">Resources</a></li>
+            <li><a href="#" class="nav-link" data-section="handover">Handover</a></li>
+            <li><a href="#" class="nav-link" data-section="checklist">Checklist</a></li>
+            <li><a href="#" class="nav-link" data-section="demo">Chatbot Demo</a></li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <!-- Search Box -->
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search the playbook...">
+            <button onclick="searchPlaybook()">🔍</button>
+        </div>
+        
+        <!-- About Section -->
+        <section id="about" class="section active">
+            <h2><span class="icon">📘</span> About This Playbook</h2>
+            
+            <div class="card">
+                <div class="card-header">What is This Playbook?</div>
+                <p>This Interactive Invoice Automation Project Playbook is a comprehensive digital guide designed to support the successful implementation of an end-to-end invoice processing automation system. It serves as a single source of truth for all stakeholders involved in transforming manual invoice processing from 2 hours to under 2 minutes.</p>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">What Can You Do With This Playbook?</div>
+                
+                <h3>📊 Project Management</h3>
+                <ul>
+                    <li><strong>Track Progress:</strong> Use interactive checklists with real-time completion percentages for each project phase</li>
+                    <li><strong>Visualize Timeline:</strong> Access detailed Gantt charts showing all 47 tasks, dependencies, and resource allocations</li>
+                    <li><strong>Monitor Milestones:</strong> Follow 8 key milestones from project kickoff to completion</li>
+                    <li><strong>Manage Resources:</strong> View resource requirements and assignments for each task</li>
+                </ul>
+                
+                <h3>🎯 Planning & Strategy</h3>
+                <ul>
+                    <li><strong>Understand Phases:</strong> Explore detailed breakdowns of all 5 implementation phases</li>
+                    <li><strong>Review Deliverables:</strong> Access comprehensive lists of deliverables for each phase</li>
+                    <li><strong>Assess Risks:</strong> Use the risk matrix to identify and mitigate potential issues</li>
+                    <li><strong>Plan Validation:</strong> Follow structured testing strategies for invoice processing and chatbot</li>
+                </ul>
+                
+                <h3>📈 Performance Tracking</h3>
+                <ul>
+                    <li><strong>Monitor KPIs:</strong> Track key metrics including processing time, accuracy, and FTE reduction</li>
+                    <li><strong>Measure Success:</strong> Use predefined success criteria with measurable targets</li>
+                    <li><strong>Validate Quality:</strong> Access detailed validation plans and testing procedures</li>
+                    <li><strong>Track ROI:</strong> Monitor business impact metrics and efficiency gains</li>
+                </ul>
+                
+                <h3>🤖 Interactive Features</h3>
+                <ul>
+                    <li><strong>Test Chatbot:</strong> Experience the AI-powered invoice assistant with sample data</li>
+                    <li><strong>Search Content:</strong> Quickly find information using the built-in search functionality</li>
+                    <li><strong>Save Progress:</strong> Checklist states are automatically saved in your browser</li>
+                    <li><strong>Print Reports:</strong> Generate printable versions of the complete playbook</li>
+                </ul>
+                
+                <h3>🤝 Stakeholder Communication</h3>
+                <ul>
+                    <li><strong>Share Updates:</strong> Use progress indicators to communicate project status</li>
+                    <li><strong>Training Reference:</strong> Access comprehensive handover plans and training materials</li>
+                    <li><strong>Change Management:</strong> Follow structured approaches for regional deployments</li>
+                    <li><strong>Knowledge Transfer:</strong> Utilize detailed documentation for team onboarding</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Who Should Use This Playbook?</div>
+                <ul>
+                    <li><strong>Project Managers:</strong> For overall project coordination and timeline management</li>
+                    <li><strong>Technical Teams:</strong> For implementation details and technical specifications</li>
+                    <li><strong>Business Analysts:</strong> For requirements tracking and validation planning</li>
+                    <li><strong>Regional Teams:</strong> For localization requirements and deployment planning</li>
+                    <li><strong>Stakeholders:</strong> For progress monitoring and decision-making</li>
+                    <li><strong>Training Teams:</strong> For developing training materials and conducting sessions</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">How to Navigate</div>
+                <ol>
+                    <li><strong>Use the Navigation Bar:</strong> Click on any section to jump directly to that content</li>
+                    <li><strong>Interactive Elements:</strong> Click on checkboxes to track completion, expand phase cards for details</li>
+                    <li><strong>Search Function:</strong> Use Ctrl+F or the search box to find specific information</li>
+                    <li><strong>Chatbot Demo:</strong> Click the chat icon in the bottom-right to test the invoice assistant</li>
+                    <li><strong>Progress Tracking:</strong> Your checklist progress is automatically saved and restored</li>
+                </ol>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Key Features</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div style="background-color: #e8f5e9; padding: 20px; border-radius: 8px; text-align: center;">
+                        <h4>Interactive Checklists</h4>
+                        <p>Track completion with visual progress bars</p>
+                    </div>
+                    <div style="background-color: #e3f2fd; padding: 20px; border-radius: 8px; text-align: center;">
+                        <h4>Detailed Gantt Chart</h4>
+                        <p>47 tasks with dependencies and resources</p>
+                    </div>
+                    <div style="background-color: #fff3e0; padding: 20px; border-radius: 8px; text-align: center;">
+                        <h4>Live Chatbot Demo</h4>
+                        <p>Test the AI assistant with sample invoices</p>
+                    </div>
+                    <div style="background-color: #fce4ec; padding: 20px; border-radius: 8px; text-align: center;">
+                        <h4>Risk Management</h4>
+                        <p>Interactive risk matrix with mitigation strategies</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Overview Section -->
+        <section id="overview" class="section">
+            <h2><span class="icon">🎯</span> Project Overview</h2>
+            
+            <div class="card">
+                <div class="card-header">Executive Summary</div>
+                <p>The Invoice Automation Project aims to transform manual invoice processing into a fully automated workflow, reducing processing time by 98% and expanding across AP Region and Brazil. The project includes an AI-powered chatbot for real-time stakeholder queries.</p>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Key Objectives</div>
+                <ul>
+                    <li>🚀 Automate end-to-end invoice processing from PDF receipt to SAP posting</li>
+                    <li>🎯 Achieve 95%+ accuracy in data extraction and validation</li>
+                    <li>🌏 Deploy solution across AP Region and Brazil</li>
+                    <li>💬 Implement AI chatbot for invoice status queries</li>
+                    <li>⏱️ Reduce invoice processing time from 2 hours to <2 minutes</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Project Statistics</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div style="text-align: center; padding: 20px; background-color: #3498db; color: white; border-radius: 8px;">
+                        <div style="font-size: 36px; font-weight: bold;">14</div>
+                        <div>Months Duration</div>
+                    </div>
+                    <div style="text-align: center; padding: 20px; background-color: #9b59b6; color: white; border-radius: 8px;">
+                        <div style="font-size: 36px; font-weight: bold;">47</div>
+                        <div>Total Tasks</div>
+                    </div>
+                    <div style="text-align: center; padding: 20px; background-color: #27ae60; color: white; border-radius: 8px;">
+                        <div style="font-size: 36px; font-weight: bold;">5</div>
+                        <div>Project Phases</div>
+                    </div>
+                    <div style="text-align: center; padding: 20px; background-color: #f39c12; color: white; border-radius: 8px;">
+                        <div style="font-size: 36px; font-weight: bold;">15</div>
+                        <div>Team Members</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Success Criteria</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%;" id="successProgress">0%</div>
+                </div>
+                <ul class="checklist" id="successChecklist">
+                    <li onclick="toggleCheck(this)">
+                        <div class="checkbox"></div>
+                        <span>95%+ extraction accuracy achieved</span>
+                    </li>
+                    <li onclick="toggleCheck(this)">
+                        <div class="checkbox"></div>
+                        <span>90%+ user satisfaction score</span>
+                    </li>
+                    <li onclick="toggleCheck(this)">
+                        <div class="checkbox"></div>
+                        <span>Zero critical SAP posting errors</span>
+                    </li>
+                    <li onclick="toggleCheck(this)">
+                        <div class="checkbox"></div>
+                        <span>Chatbot response accuracy >95%</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
+        
+        <!-- Project Phases Section -->
+        <section id="phases" class="section">
+            <h2><span class="icon">📊</span> Project Phases</h2>
+            
+            <div class="phase-card phase-1" onclick="togglePhase(this)">
+                <h3>Phase 1: Discovery & Analysis (3 weeks)</h3>
+                <div class="phase-content">
+                    <p><strong>Objective:</strong> Understand current invoice processing workflow and identify automation opportunities.</p>
+                    <h4>Key Activities:</h4>
+                    <ul>
+                        <li>Map current state invoice process</li>
+                        <li>Identify pain points and bottlenecks</li>
+                        <li>Gather business requirements</li>
+                        <li>Assess technology landscape</li>
+                        <li>Review security and compliance needs</li>
+                    </ul>
+                    <h4>Deliverables:</h4>
+                    <ul>
+                        <li>Process flow documentation</li>
+                        <li>Requirements specification</li>
+                        <li>Technology stack recommendation</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="phase-card phase-2" onclick="togglePhase(this)">
+                <h3>Phase 2: Testing & Validation (5 weeks)</h3>
+                <div class="phase-content">
+                    <p><strong>Objective:</strong> Prove technical feasibility and validate approach with stakeholders.</p>
+                    <h4>Key Activities:</h4>
+                    <ul>
+                        <li>Setup OCR and data extraction</li>
+                        <li>Develop invoice templates</li>
+                        <li>Test extraction accuracy</li>
+                        <li>Build rule engine prototype</li>
+                        <li>Configure business validation rules</li>
+                    </ul>
+                    <h4>Deliverables:</h4>
+                    <ul>
+                        <li>Proof of Concept demonstration</li>
+                        <li>Accuracy test results</li>
+                        <li>Go/No-Go decision</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="phase-card phase-3" onclick="togglePhase(this)">
+                <h3>Phase 3: Implementation (8 weeks)</h3>
+                <div class="phase-content">
+                    <p><strong>Objective:</strong> Build and deploy the complete automated solution.</p>
+                    <h4>Key Activities:</h4>
+                    <ul>
+                        <li>Develop core workflow engine</li>
+                        <li>Integrate with SAP system</li>
+                        <li>Build error handling mechanisms</li>
+                        <li>Create monitoring dashboard</li>
+                        <li>Conduct comprehensive testing</li>
+                    </ul>
+                    <h4>Deliverables:</h4>
+                    <ul>
+                        <li>Production-ready system</li>
+                        <li>UAT sign-off</li>
+                        <li>Go-live approval</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="phase-card phase-4" onclick="togglePhase(this)">
+                <h3>Phase 4: Regional Expansion (12 weeks)</h3>
+                <div class="phase-content">
+                    <p><strong>Objective:</strong> Roll out solution to AP Region and Brazil.</p>
+                    <h4>Key Activities:</h4>
+                    <ul>
+                        <li>Gather regional requirements</li>
+                        <li>Implement localization</li>
+                        <li>Conduct pilot deployments</li>
+                        <li>Train regional teams</li>
+                        <li>Full regional rollout</li>
+                    </ul>
+                    <h4>Deliverables:</h4>
+                    <ul>
+                        <li>AP Region deployment</li>
+                        <li>Brazil deployment</li>
+                        <li>Regional training materials</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="phase-card phase-5" onclick="togglePhase(this)">
+                <h3>Phase 5: Chatbot Development (8 weeks)</h3>
+                <div class="phase-content">
+                    <p><strong>Objective:</strong> Create AI-powered chatbot for stakeholder queries.</p>
+                    <h4>Key Activities:</h4>
+                    <ul>
+                        <li>Design data model</li>
+                        <li>Train NLP models</li>
+                        <li>Develop integrations</li>
+                        <li>Build user interface</li>
+                        <li>Conduct validation testing</li>
+                    </ul>
+                    <h4>Deliverables:</h4>
+                    <ul>
+                        <li>Functional chatbot</li>
+                        <li>Validation report</li>
+                        <li>User training</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Timeline Section -->
+        <section id="timeline" class="section">
+            <h2><span class="icon">📅</span> Project Timeline</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Project Kickoff</h3>
+                        <p>Initial team formation and charter approval</p>
+                    </div>
+                    <div class="timeline-date">June 2025</div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Requirements Approved</h3>
+                        <p>Business requirements signed off by sponsors</p>
+                    </div>
+                    <div class="timeline-date">June 2025</div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Proof of Concept Demonstration</h3>
+                        <p>Successful extraction testing completed</p>
+                    </div>
+                    <div class="timeline-date">July 2025</div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>System Go-Live</h3>
+                        <p>Core automation deployed to production</p>
+                    </div>
+                    <div class="timeline-date">September 2025</div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>AP Region Launch</h3>
+                        <p>System live across Asia Pacific region</p>
+                    </div>
+                    <div class="timeline-date">November 2025</div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Brazil Go-Live</h3>
+                        <p>Full deployment in Brazil completed</p>
+                    </div>
+                    <div class="timeline-date">January 2026</div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Chatbot Launch</h3>
+                        <p>AI assistant available to all stakeholders</p>
+                    </div>
+                    <div class="timeline-date">March 2026</div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Project Complete</h3>
+                        <p>Full handover and project closure</p>
+                    </div>
+                    <div class="timeline-date">March 2026</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Gantt Chart Section -->
+        <section id="gantt" class="section">
+            <h2><span class="icon">📊</span> Detailed Gantt Chart</h2>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-label">Total Duration</div>
+                    <div class="stat-value">10 Months</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Tasks</div>
+                    <div class="stat-value">47 Tasks</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Key Milestones</div>
+                    <div class="stat-value">8 Milestones</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Resources Required</div>
+                    <div class="stat-value">12-15 FTEs</div>
+                </div>
+            </div>
+            
+            <div class="gantt-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 3%">ID</th>
+                            <th style="width: 25%">Task Name</th>
+                            <th style="width: 8%">Resources</th>
+                            <th style="width: 6%">Duration</th>
+                            <th style="width: 8%">Dependencies</th>
+                            <th style="width: 10%">Deliverables</th>
+                            <th colspan="40" style="width: 40%">2025-2026 Timeline (Weekly View)</th>
+                        </tr>
+                        <tr>
+                            <th colspan="6"></th>
+                            <th class="month" colspan="4">Jun '25</th>
+                            <th class="month" colspan="4">Jul '25</th>
+                            <th class="month" colspan="4">Aug '25</th>
+                            <th class="month" colspan="4">Sep '25</th>
+                            <th class="month" colspan="4">Oct '25</th>
+                            <th class="month" colspan="4">Nov '25</th>
+                            <th class="month" colspan="4">Dec '25</th>
+                            <th class="month" colspan="4">Jan '26</th>
+                            <th class="month" colspan="4">Feb '26</th>
+                            <th class="month" colspan="4">Mar '26</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Phase 1: Discovery & Analysis -->
+                        <tr class="phase">
+                            <td colspan="6"><strong>PHASE 1: DISCOVERY & ANALYSIS</strong></td>
+                            <td colspan="40"></td>
+                        </tr>
+                        
+                        <tr class="critical-path">
+                            <td class="task-id">1</td>
+                            <td class="task-name">Invoice Process Analysis</td>
+                            <td class="resources">BA(2), PM</td>
+                            <td>3 weeks</td>
+                            <td class="dependencies">-</td>
+                            <td class="deliverable">Process Map</td>
+                            <td colspan="3" class="week-cell month-start"><div class="bar bar-discovery bar-critical">Critical</div></td>
+                            <td colspan="37"></td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="task-id">1.1</td>
+                            <td class="task-name subtask">→ Current State Mapping</td>
+                            <td class="resources">BA(2)</td>
+                            <td>1 week</td>
+                            <td class="dependencies">-</td>
+                            <td></td>
+                            <td class="week-cell month-start"><div class="bar bar-discovery"></div></td>
+                            <td colspan="39"></td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="task-id">1.2</td>
+                            <td class="task-name subtask">→ Pain Point Analysis</td>
+                            <td class="resources">BA(2)</td>
+                            <td>1 week</td>
+                            <td class="dependencies">1.1</td>
+                            <td></td>
+                            <td class="week-cell month-start"></td>
+                            <td class="week-cell"><div class="bar bar-discovery"></div></td>
+                            <td colspan="38"></td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="task-id">1.3</td>
+                            <td class="task-name subtask">→ Requirements Gathering</td>
+                            <td class="resources">BA, PM</td>
+                            <td>1 week</td>
+                            <td class="dependencies">1.2</td>
+                            <td></td>
+                            <td colspan="2" class="week-cell month-start"></td>
+                            <td class="week-cell"><div class="bar bar-discovery"></div></td>
+                            <td colspan="37"></td>
+                        </tr>
+                        
+                        <tr style="background-color: #fff3cd;">
+                            <td class="task-id">M1</td>
+                            <td class="task-name"><strong>⬥ Milestone: Requirements Approved</strong></td>
+                            <td class="resources">Sponsor</td>
+                            <td>-</td>
+                            <td class="dependencies">1.3</td>
+                            <td class="deliverable">Sign-off</td>
+                            <td colspan="3" class="week-cell month-start"></td>
+                            <td class="week-cell"><div class="milestone"><span class="milestone-label">M1</span></div></td>
+                            <td colspan="36"></td>
+                        </tr>
+                        
+                        <tr class="critical-path">
+                            <td class="task-id">2</td>
+                            <td class="task-name">Technology Assessment</td>
+                            <td class="resources">Tech Lead, Dev(2)</td>
+                            <td>2 weeks</td>
+                            <td class="dependencies">1.2</td>
+                            <td class="deliverable">Tech Stack</td>
+                            <td colspan="2" class="week-cell month-start"></td>
+                            <td colspan="2" class="week-cell"><div class="bar bar-discovery bar-critical">Critical</div></td>
+                            <td colspan="36"></td>
+                        </tr>
+                        
+                        <!-- Phase 2: Testing & Validation -->
+                        <tr class="phase">
+                            <td colspan="6"><strong>PHASE 2: TESTING & VALIDATION</strong></td>
+                            <td colspan="40"></td>
+                        </tr>
+                        
+                        <tr class="critical-path">
+                            <td class="task-id">3</td>
+                            <td class="task-name">Invoice Extraction Testing</td>
+                            <td class="resources">Dev(2), Data Sci</td>
+                            <td>3 weeks</td>
+                            <td class="dependencies">2</td>
+                            <td class="deliverable">PoC Demo</td>
+                            <td colspan="4" class="week-cell month-start"></td>
+                            <td colspan="3" class="week-cell month-start"><div class="bar bar-testing bar-critical">Critical</div></td>
+                            <td colspan="33"></td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="task-id">4</td>
+                            <td class="task-name">Stakeholder Communication</td>
+                            <td class="resources">PM, Sponsor</td>
+                            <td>1 week</td>
+                            <td class="dependencies">3</td>
+                            <td class="deliverable">Go/No-Go</td>
+                            <td colspan="7" class="week-cell month-start"></td>
+                            <td class="week-cell"><div class="bar bar-testing"></div></td>
+                            <td colspan="32"></td>
+                        </tr>
+                        
+                        <tr style="background-color: #fff3cd;">
+                            <td class="task-id">M2</td>
+                            <td class="task-name"><strong>⬥ Milestone: PoC Approval</strong></td>
+                            <td class="resources">Steering Com</td>
+                            <td>-</td>
+                            <td class="dependencies">4</td>
+                            <td class="deliverable">Approval</td>
+                            <td colspan="7" class="week-cell month-start"></td>
+                            <td class="week-cell"><div class="milestone"><span class="milestone-label">M2</span></div></td>
+                            <td colspan="32"></td>
+                        </tr>
+                        
+                        <tr class="critical-path">
+                            <td class="task-id">5</td>
+                            <td class="task-name">Automated Verification Testing</td>
+                            <td class="resources">Dev(3), BA</td>
+                            <td>4 weeks</td>
+                            <td class="dependencies">4</td>
+                            <td class="deliverable">Test Report</td>
+                            <td colspan="8" class="week-cell month-start"></td>
+                            <td colspan="4" class="week-cell month-start"><div class="bar bar-testing bar-critical">Critical</div></td>
+                            <td colspan="28"></td>
+                        </tr>
+                        
+                        <!-- Phase 3: Implementation -->
+                        <tr class="phase">
+                            <td colspan="6"><strong>PHASE 3: IMPLEMENTATION</strong></td>
+                            <td colspan="40"></td>
+                        </tr>
+                        
+                        <tr class="critical-path">
+                            <td class="task-id">6</td>
+                            <td class="task-name">End-to-End Process Automation</td>
+                            <td class="resources">Dev(4), BA(2)</td>
+                            <td>6 weeks</td>
+                            <td class="dependencies">5</td>
+                            <td class="deliverable">Beta System</td>
+                            <td colspan="12" class="week-cell month-start"></td>
+                            <td colspan="6" class="week-cell month-start"><div class="bar bar-implementation bar-critical">Critical Path</div></td>
+                            <td colspan="22"></td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="task-id">7</td>
+                            <td class="task-name">Accuracy & Completeness Testing</td>
+                            <td class="resources">QA(2), Finance</td>
+                            <td>3 weeks</td>
+                            <td class="dependencies">6</td>
+                            <td class="deliverable">UAT Report</td>
+                            <td colspan="18" class="week-cell month-start"></td>
+                            <td colspan="3" class="week-cell"><div class="bar bar-implementation"></div></td>
+                            <td colspan="19"></td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="task-id">8</td>
+                            <td class="task-name">Results Communication</td>
+                            <td class="resources">PM, Sponsor</td>
+                            <td>1 week</td>
+                            <td class="dependencies">7</td>
+                            <td class="deliverable">Go-Live</td>
+                            <td colspan="21" class="week-cell month-start"></td>
+                            <td class="week-cell"><div class="bar bar-implementation"></div></td>
+                            <td colspan="18"></td>
+                        </tr>
+                        
+                        <tr style="background-color: #fff3cd;">
+                            <td class="task-id">M3</td>
+                            <td class="task-name"><strong>⬥ Milestone: System Go-Live</strong></td>
+                            <td class="resources">All Teams</td>
+                            <td>-</td>
+                            <td class="dependencies">8</td>
+                            <td class="deliverable">Launch</td>
+                            <td colspan="21" class="week-cell month-start"></td>
+                            <td class="week-cell"><div class="milestone"><span class="milestone-label">M3</span></div></td>
+                            <td colspan="18"></td>
+                        </tr>
+                        
+                        <!-- Phase 4: Regional Expansion -->
+                        <tr class="phase">
+                            <td colspan="6"><strong>PHASE 4: REGIONAL EXPANSION</strong></td>
+                            <td colspan="40"></td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="task-id">9</td>
+                            <td class="task-name">APAC Expansion</td>
+                            <td class="resources">PM, Dev(3), BA</td>
+                            <td>8 weeks</td>
+                            <td class="dependencies">8</td>
+                            <td class="deliverable">APAC Live</td>
+                            <td colspan="22" class="week-cell month-start"></td>
+                            <td colspan="8" class="week-cell month-start"><div class="bar bar-expansion">APAC Expansion</div></td>
+                            <td colspan="10"></td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="task-id">10</td>
+                            <td class="task-name">AP Region Testing & Validation</td>
+                            <td class="resources">QA, Regional</td>
+                            <td>3 weeks</td>
+                            <td class="dependencies">9</td>
+                            <td class="deliverable">Test Report</td>
+                            <td colspan="30" class="week-cell month-start"></td>
+                            <td colspan="3" class="week-cell"><div class="bar bar-expansion"></div></td>
+                            <td colspan="7"></td>
+                        </tr>
+                        
+                        <tr style="background-color: #fff3cd;">
+                            <td class="task-id">M4</td>
+                            <td class="task-name"><strong>⬥ Milestone: AP Region Go-Live</strong></td>
+                            <td class="resources">Regional</td>
+                            <td>-</td>
+                            <td class="dependencies">10</td>
+                            <td class="deliverable">Launch</td>
+                            <td colspan="32" class="week-cell month-start"></td>
+                            <td class="week-cell"><div class="milestone"><span class="milestone-label">M4</span></div></td>
+                            <td colspan="7"></td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="task-id">11</td>
+                            <td class="task-name">Brazil Team Coordination</td>
+                            <td class="resources">PM, Brazil Lead</td>
+                            <td>2 weeks</td>
+                            <td class="dependencies">10</td>
+                            <td class="deliverable">Agreement</td>
+                            <td colspan="33" class="week-cell month-start"></td>
+                            <td colspan="2" class="week-cell"><div class="bar bar-expansion"></div></td>
+                            <td colspan="5"></td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="task-id">12</td>
+                            <td class="task-name">Brazil Implementation</td>
+                            <td class="resources">Dev(3), Brazil Team</td>
+                            <td>6 weeks</td>
+                            <td class="dependencies">11</td>
+                            <td class="deliverable">Brazil Live</td>
+                            <td colspan="35" class="week-cell month-start"></td>
+                            <td colspan="5" class="week-cell"><div class="bar bar-expansion">Brazil Deploy</div></td>
+                        </tr>
+                        
+                        <tr style="background-color: #fff3cd;">
+                            <td class="task-id">M5</td>
+                            <td class="task-name"><strong>⬥ Milestone: Brazil Go-Live</strong></td>
+                            <td class="resources">Brazil Team</td>
+                            <td>-</td>
+                            <td class="dependencies">12</td>
+                            <td class="deliverable">Launch</td>
+                            <td colspan="39" class="week-cell month-start"></td>
+                            <td class="week-cell"><div class="milestone"><span class="milestone-label">M5</span></div></td>
+                        </tr>
+                        
+                        <!-- Phase 5: Chatbot Development -->
+                        <tr class="phase">
+                            <td colspan="6"><strong>PHASE 5: CHATBOT DEVELOPMENT</strong></td>
+                            <td colspan="40"></td>
+                        </tr>
+                        
+                        <tr class="critical-path">
+                            <td class="task-id">13</td>
+                            <td class="task-name">Chatbot Development</td>
+                            <td class="resources">AI Team(3), Dev(2)</td>
+                            <td>6 weeks</td>
+                            <td class="dependencies">12</td>
+                            <td class="deliverable">Beta Bot</td>
+                            <td colspan="34" class="week-cell month-start"></td>
+                            <td colspan="6" class="week-cell month-start"><div class="bar bar-chatbot bar-critical">Chatbot Dev</div></td>
+                        </tr>
+                        
+                        <tr class="critical-path">
+                            <td class="task-id">14</td>
+                            <td class="task-name">Chatbot Validation</td>
+                            <td class="resources">QA(2), Users(10)</td>
+                            <td>2 weeks</td>
+                            <td class="dependencies">13</td>
+                            <td class="deliverable">Val Report</td>
+                            <td colspan="38" class="week-cell month-start"></td>
+                            <td colspan="2" class="week-cell month-start"><div class="bar bar-chatbot bar-critical">Val</div></td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="task-id">15</td>
+                            <td class="task-name">Final Results Communication</td>
+                            <td class="resources">PM, Sponsor</td>
+                            <td>3 days</td>
+                            <td class="dependencies">14</td>
+                            <td class="deliverable">Report</td>
+                            <td colspan="39" class="week-cell month-start"></td>
+                            <td class="week-cell"><div class="bar bar-chatbot" style="width: 60%"></div></td>
+                        </tr>
+                        
+                        <tr style="background-color: #fff3cd;">
+                            <td class="task-id">M6</td>
+                            <td class="task-name"><strong>⬥ Milestone: Final Approval</strong></td>
+                            <td class="resources">Steering Com</td>
+                            <td>-</td>
+                            <td class="dependencies">15</td>
+                            <td class="deliverable">Sign-off</td>
+                            <td colspan="39" class="week-cell month-start"></td>
+                            <td class="week-cell"><div class="milestone"><span class="milestone-label">M6</span></div></td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="task-id">16</td>
+                            <td class="task-name">Stakeholder Rollout</td>
+                            <td class="resources">PM, Comms Team</td>
+                            <td>3 days</td>
+                            <td class="dependencies">15</td>
+                            <td class="deliverable">Launch</td>
+                            <td colspan="39" class="week-cell month-start"></td>
+                            <td class="week-cell"><div class="bar bar-chatbot" style="width: 60%; margin-left: 40%"></div></td>
+                        </tr>
+                        
+                        <tr style="background-color: #fff3cd;">
+                            <td class="task-id">M7</td>
+                            <td class="task-name"><strong>⬥ Milestone: Project Complete</strong></td>
+                            <td class="resources">All</td>
+                            <td>-</td>
+                            <td class="dependencies">16</td>
+                            <td class="deliverable">Success!</td>
+                            <td colspan="39" class="week-cell month-start"></td>
+                            <td class="week-cell"><div class="milestone"><span class="milestone-label">M7</span></div></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color bar-discovery"></div>
+                    <span>Discovery & Analysis</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color bar-testing"></div>
+                    <span>Testing & Validation</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color bar-implementation"></div>
+                    <span>Implementation</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color bar-expansion"></div>
+                    <span>Regional Expansion</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color bar-chatbot"></div>
+                    <span>Chatbot Development</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color bar-critical"></div>
+                    <span>Critical Path</span>
+                </div>
+                <div class="legend-item">
+                    <div class="milestone"></div>
+                    <span>Milestone</span>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px; padding: 20px; background-color: #f8f9fa; border-radius: 8px;">
+                <h3 style="color: #2c3e50; margin-bottom: 15px;">Key Project Information</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 10px;"><strong>Critical Path Duration:</strong> 32 weeks (Compressed from 45 weeks)</li>
+                    <li style="margin-bottom: 10px;"><strong>Total Resource Requirements:</strong> 
+                        <ul style="margin-top: 5px; margin-left: 20px;">
+                            <li>Development Team: 4-5 FTEs</li>
+                            <li>Business Analysts: 2-3 FTEs</li>
+                            <li>QA Team: 2 FTEs</li>
+                            <li>AI/Data Science: 3 FTEs</li>
+                            <li>Project Management: 1-2 FTEs</li>
+                            <li>Regional Teams: As needed</li>
+                        </ul>
+                    </li>
+                    <li style="margin-bottom: 10px;"><strong>Major Dependencies:</strong> 
+                        <ul style="margin-top: 5px; margin-left: 20px;">
+                            <li>SAP system availability for integration</li>
+                            <li>Regional team cooperation for expansion</li>
+                            <li>Sponsor approval at key milestones</li>
+                            <li>User availability for testing phases</li>
+                        </ul>
+                    </li>
+                    <li><strong>Risk Areas:</strong> 
+                        <ul style="margin-top: 5px; margin-left: 20px;">
+                            <li>OCR accuracy for varied invoice formats</li>
+                            <li>SAP integration complexity</li>
+                            <li>Multi-language support requirements</li>
+                            <li>Change management across regions</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </section>
+        
+        <!-- Validation Plan Section -->
+        <section id="validation" class="section">
+            <h2><span class="icon">✅</span> Validation Plan</h2>
+            
+            <div class="card">
+                <div class="card-header">Testing Strategy</div>
+                <p>Our validation approach ensures robust testing across all components:</p>
+                
+                <h3>Invoice Processing Tests</h3>
+                <table>
+                    <tr>
+                        <th>Test Type</th>
+                        <th>Dataset</th>
+                        <th>Success Criteria</th>
+                        <th>Owner</th>
+                    </tr>
+                    <tr>
+                        <td>Extraction Accuracy</td>
+                        <td>1,000 historical invoices</td>
+                        <td>>99% field accuracy</td>
+                        <td>QA Team</td>
+                    </tr>
+                    <tr>
+                        <td>Processing Speed</td>
+                        <td>100 concurrent invoices</td>
+                        <td><2 min per invoice</td>
+                        <td>Dev Team</td>
+                    </tr>
+                    <tr>
+                        <td>Validation Rules</td>
+                        <td>500 test scenarios</td>
+                        <td>100% rule compliance</td>
+                        <td>Business Analysts</td>
+                    </tr>
+                    <tr>
+                        <td>SAP Integration</td>
+                        <td>200 test transactions</td>
+                        <td>Zero posting errors</td>
+                        <td>Integration Team</td>
+                    </tr>
+                </table>
+                
+                <h3>Chatbot Validation</h3>
+                <table>
+                    <tr>
+                        <th>Query Category</th>
+                        <th>Test Prompts</th>
+                        <th>Target Metric</th>
+                        <th>Validation Method</th>
+                    </tr>
+                    <tr>
+                        <td>Invoice Status</td>
+                        <td>200 prompts</td>
+                        <td>>95% accuracy</td>
+                        <td>Ground truth comparison</td>
+                    </tr>
+                    <tr>
+                        <td>Payment Queries</td>
+                        <td>150 prompts</td>
+                        <td>>95% accuracy</td>
+                        <td>Database verification</td>
+                    </tr>
+                    <tr>
+                        <td>Issue Resolution</td>
+                        <td>100 prompts</td>
+                        <td>>90% helpful</td>
+                        <td>User feedback</td>
+                    </tr>
+                    <tr>
+                        <td>PO Information</td>
+                        <td>100 prompts</td>
+                        <td>>95% accuracy</td>
+                        <td>System cross-check</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Validation Phases</div>
+                <ol>
+                    <li><strong>Unit Testing (Week 1-2)</strong>
+                        <ul>
+                            <li>Component-level testing</li>
+                            <li>Algorithm verification</li>
+                            <li>Security scanning</li>
+                        </ul>
+                    </li>
+                    <li><strong>Integration Testing (Week 3-4)</strong>
+                        <ul>
+                            <li>End-to-end workflow</li>
+                            <li>System interfaces</li>
+                            <li>Error handling</li>
+                        </ul>
+                    </li>
+                    <li><strong>User Acceptance Testing (Week 5-6)</strong>
+                        <ul>
+                            <li>Business scenario testing</li>
+                            <li>Performance validation</li>
+                            <li>User experience feedback</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+        </section>
+        
+        <!-- KPIs Section -->
+        <section id="kpis" class="section">
+            <h2><span class="icon">📈</span> KPIs & Metrics</h2>
+            
+            <div class="card">
+                <div class="card-header">Process Efficiency KPIs</div>
+                <table>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Baseline</th>
+                        <th>Target</th>
+                        <th>Measurement</th>
+                    </tr>
+                    <tr>
+                        <td>Invoice Processing Time</td>
+                        <td>2 hours</td>
+                        <td><2 minutes</td>
+                        <td>System timestamps</td>
+                    </tr>
+                    <tr>
+                        <td>First-Pass Accuracy</td>
+                        <td>95%</td>
+                        <td>99%</td>
+                        <td>Error logs</td>
+                    </tr>
+                    <tr>
+                        <td>Manual Intervention Rate</td>
+                        <td>40%</td>
+                        <td><5%</td>
+                        <td>Exception reports</td>
+                    </tr>
+                    <tr>
+                        <td>FTE Reduction</td>
+                        <td>Current staffing</td>
+                        <td>4 FTE reduction annually</td>
+                        <td>Workforce analytics</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Quality KPIs</div>
+                <ul>
+                    <li><strong>Data Extraction Accuracy</strong>
+                        <ul>
+                            <li>Invoice Number: 99.5%</li>
+                            <li>Amount Fields: 99.8%</li>
+                            <li>Vendor Details: 99%</li>
+                            <li>Date Fields: 99.5%</li>
+                        </ul>
+                    </li>
+                    <li><strong>Compliance Rate:</strong> 100% audit compliance</li>
+                    <li><strong>Error Rate:</strong> <0.1% critical errors</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Business Impact KPIs</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div style="background-color: #e8f5e9; padding: 20px; border-radius: 8px; border-left: 4px solid #27ae60;">
+                        <h4>Early Payment Discounts</h4>
+                        <p style="font-size: 24px; font-weight: bold; color: #27ae60;">95%</p>
+                        <p>of available discounts captured</p>
+                    </div>
+                    <div style="background-color: #e3f2fd; padding: 20px; border-radius: 8px; border-left: 4px solid #3498db;">
+                        <h4>Invoice Backlog</h4>
+                        <p style="font-size: 24px; font-weight: bold; color: #3498db;"><5%</p>
+                        <p>of monthly volume</p>
+                    </div>
+                    <div style="background-color: #fff3e0; padding: 20px; border-radius: 8px; border-left: 4px solid #f39c12;">
+                        <h4>FTE Optimization</h4>
+                        <p style="font-size: 24px; font-weight: bold; color: #f39c12;">4 FTEs</p>
+                        <p>annual reduction achieved</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Risk Management Section -->
+        <section id="risks" class="section">
+            <h2><span class="icon">⚠️</span> Risk Management</h2>
+            
+            <div class="card">
+                <div class="card-header">Risk Assessment Matrix</div>
+                <div class="risk-matrix">
+                    <div></div>
+                    <div style="text-align: center; font-weight: bold;">Low Impact</div>
+                    <div style="text-align: center; font-weight: bold;">Medium Impact</div>
+                    <div style="text-align: center; font-weight: bold;">High Impact</div>
+                    
+                    <div style="font-weight: bold;">High Likelihood</div>
+                    <div class="risk-cell risk-medium">
+                        <span class="tooltip">Volume Spikes
+                            <span class="tooltip-text">Month-end processing peaks may strain system</span>
+                        </span>
+                    </div>
+                    <div class="risk-cell risk-high">
+                        <span class="tooltip">User Resistance
+                            <span class="tooltip-text">Teams may resist changing established processes</span>
+                        </span>
+                    </div>
+                    <div class="risk-cell risk-critical">
+                        <span class="tooltip">Data Quality Issues
+                            <span class="tooltip-text">Poor invoice quality could impact accuracy</span>
+                        </span>
+                    </div>
+                    
+                    <div style="font-weight: bold;">Medium Likelihood</div>
+                    <div class="risk-cell risk-low">Vendor Changes</div>
+                    <div class="risk-cell risk-medium">
+                        <span class="tooltip">Model Drift
+                            <span class="tooltip-text">AI models may degrade over time</span>
+                        </span>
+                    </div>
+                    <div class="risk-cell risk-high">
+                        <span class="tooltip">OCR Failures
+                            <span class="tooltip-text">Complex formats may not extract correctly</span>
+                        </span>
+                    </div>
+                    
+                    <div style="font-weight: bold;">Low Likelihood</div>
+                    <div class="risk-cell risk-low">Minor Bugs</div>
+                    <div class="risk-cell risk-medium">Integration Delays</div>
+                    <div class="risk-cell risk-high">
+                        <span class="tooltip">SAP Downtime
+                            <span class="tooltip-text">Critical system unavailability</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Mitigation Strategies</div>
+                <table>
+                    <tr>
+                        <th>Risk</th>
+                        <th>Mitigation Strategy</th>
+                        <th>Owner</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td>OCR Extraction Failures</td>
+                        <td>
+                            <ul>
+                                <li>Implement fallback to manual queue</li>
+                                <li>Continuous model training</li>
+                                <li>Multiple OCR engine redundancy</li>
+                            </ul>
+                        </td>
+                        <td>Tech Lead</td>
+                        <td><span style="color: #f39c12;">In Progress</span></td>
+                    </tr>
+                    <tr>
+                        <td>User Resistance</td>
+                        <td>
+                            <ul>
+                                <li>Comprehensive training program</li>
+                                <li>Change champions in each region</li>
+                                <li>Gradual rollout approach</li>
+                            </ul>
+                        </td>
+                        <td>Change Manager</td>
+                        <td><span style="color: #27ae60;">Active</span></td>
+                    </tr>
+                    <tr>
+                        <td>System Integration Issues</td>
+                        <td>
+                            <ul>
+                                <li>Maintain manual posting capability</li>
+                                <li>Real-time error monitoring</li>
+                                <li>Rollback procedures ready</li>
+                            </ul>
+                        </td>
+                        <td>Integration Lead</td>
+                        <td><span style="color: #3498db;">Planned</span></td>
+                    </tr>
+                    <tr>
+                        <td>Chatbot Hallucinations</td>
+                        <td>
+                            <ul>
+                                <li>Implement fact-checking layer</li>
+                                <li>Restrict to database queries only</li>
+                                <li>Regular accuracy audits</li>
+                            </ul>
+                        </td>
+                        <td>AI Team Lead</td>
+                        <td><span style="color: #3498db;">Planned</span></td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Resources Section -->
+        <section id="resources" class="section">
+            <h2><span class="icon">👥</span> Resources & Team</h2>
+            
+            <div class="card">
+                <div class="card-header">Team Structure</div>
+                <table>
+                    <tr>
+                        <th>Role</th>
+                        <th>Count</th>
+                        <th>Allocation</th>
+                        <th>Key Responsibilities</th>
+                    </tr>
+                    <tr>
+                        <td>Project Manager</td>
+                        <td>1-2</td>
+                        <td>100%</td>
+                        <td>Overall coordination, stakeholder management</td>
+                    </tr>
+                    <tr>
+                        <td>Technical Lead</td>
+                        <td>1</td>
+                        <td>100%</td>
+                        <td>Architecture, technical decisions</td>
+                    </tr>
+                    <tr>
+                        <td>Developers</td>
+                        <td>4-5</td>
+                        <td>100%</td>
+                        <td>System development, integration</td>
+                    </tr>
+                    <tr>
+                        <td>Business Analysts</td>
+                        <td>2-3</td>
+                        <td>100%</td>
+                        <td>Requirements, process mapping</td>
+                    </tr>
+                    <tr>
+                        <td>QA Engineers</td>
+                        <td>2</td>
+                        <td>100%</td>
+                        <td>Testing, validation</td>
+                    </tr>
+                    <tr>
+                        <td>AI/Data Scientists</td>
+                        <td>3</td>
+                        <td>100%</td>
+                        <td>ML models, chatbot development</td>
+                    </tr>
+                    <tr>
+                        <td>Regional Teams</td>
+                        <td>Variable</td>
+                        <td>50%</td>
+                        <td>Local requirements, testing</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Technology Stack</div>
+                <ul>
+                    <li><strong>OCR Engine:</strong> Multiple engines for redundancy</li>
+                    <li><strong>Workflow Engine:</strong> Custom-built automation platform</li>
+                    <li><strong>Integration:</strong> SAP PI/PO or direct RFC</li>
+                    <li><strong>Database:</strong> PostgreSQL for transaction data</li>
+                    <li><strong>AI Platform:</strong> Cloud-based NLP services</li>
+                    <li><strong>Monitoring:</strong> Real-time dashboards and alerts</li>
+                    <li><strong>Infrastructure:</strong> Cloud-native, auto-scaling</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Training Resources</div>
+                <ul>
+                    <li>📚 User manuals (role-specific)</li>
+                    <li>🎥 Video training library</li>
+                    <li>🖥️ Interactive tutorials</li>
+                    <li>📋 Quick reference guides</li>
+                    <li>💬 FAQ database</li>
+                    <li>🎯 Best practices documentation</li>
+                </ul>
+            </div>
+        </section>
+        
+        <!-- Handover Section -->
+        <section id="handover" class="section">
+            <h2><span class="icon">🤝</span> Handover Plan</h2>
+            
+            <div class="card">
+                <div class="card-header">Pre-Handover Checklist (2 weeks before)</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%;" id="preHandoverProgress">0%</div>
+                </div>
+                <ul class="checklist" id="preHandoverChecklist">
+                    <li onclick="toggleCheckWithProgress(this, 'preHandoverChecklist', 'preHandoverProgress')">
+                        <div class="checkbox"></div>
+                        <span>Complete system documentation</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'preHandoverChecklist', 'preHandoverProgress')">
+                        <div class="checkbox"></div>
+                        <span>Prepare training materials</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'preHandoverChecklist', 'preHandoverProgress')">
+                        <div class="checkbox"></div>
+                        <span>Setup user accounts</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'preHandoverChecklist', 'preHandoverProgress')">
+                        <div class="checkbox"></div>
+                        <span>Configure dashboards</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'preHandoverChecklist', 'preHandoverProgress')">
+                        <div class="checkbox"></div>
+                        <span>Schedule training sessions</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Go-Live Week Activities</div>
+                <table>
+                    <tr>
+                        <th>Day</th>
+                        <th>Activities</th>
+                        <th>Participants</th>
+                    </tr>
+                    <tr>
+                        <td>Day 1-2</td>
+                        <td>
+                            <ul>
+                                <li>System access provisioning</li>
+                                <li>Role assignments</li>
+                                <li>Dashboard customization</li>
+                            </ul>
+                        </td>
+                        <td>IT Admin, Users</td>
+                    </tr>
+                    <tr>
+                        <td>Day 3-4</td>
+                        <td>
+                            <ul>
+                                <li>Supervised operations</li>
+                                <li>Real-time support</li>
+                                <li>Issue resolution</li>
+                            </ul>
+                        </td>
+                        <td>Support Team, Users</td>
+                    </tr>
+                    <tr>
+                        <td>Day 5</td>
+                        <td>
+                            <ul>
+                                <li>Formal acceptance testing</li>
+                                <li>Sign-off ceremony</li>
+                                <li>Success celebration</li>
+                            </ul>
+                        </td>
+                        <td>All Stakeholders</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Post-Handover Support Timeline</div>
+                <div style="background: linear-gradient(to right, #e74c3c 0%, #f39c12 33%, #27ae60 66%, #3498db 100%); height: 40px; border-radius: 20px; position: relative; margin: 20px 0;">
+                    <div style="position: absolute; top: 50px; left: 0; text-align: center; width: 25%;">
+                        <strong>Week 1-2</strong><br>Hypercare<br>Daily check-ins
+                    </div>
+                    <div style="position: absolute; top: 50px; left: 25%; text-align: center; width: 25%;">
+                        <strong>Week 3-4</strong><br>Stabilization<br>Bi-weekly reviews
+                    </div>
+                    <div style="position: absolute; top: 50px; left: 50%; text-align: center; width: 25%;">
+                        <strong>Month 2</strong><br>Optimization<br>Monthly reviews
+                    </div>
+                    <div style="position: absolute; top: 50px; left: 75%; text-align: center; width: 25%;">
+                        <strong>Month 3+</strong><br>Business as Usual<br>Quarterly reviews
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Master Checklist Section -->
+        <section id="checklist" class="section">
+            <h2><span class="icon">☑️</span> Master Checklist</h2>
+            
+            <div class="card">
+                <div class="card-header">Phase 1: Discovery & Analysis</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%;" id="phase1Progress">0%</div>
+                </div>
+                <ul class="checklist" id="phase1Checklist">
+                    <li onclick="toggleCheckWithProgress(this, 'phase1Checklist', 'phase1Progress')">
+                        <div class="checkbox"></div>
+                        <span>Current state process mapping completed</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'phase1Checklist', 'phase1Progress')">
+                        <div class="checkbox"></div>
+                        <span>Pain points documented</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'phase1Checklist', 'phase1Progress')">
+                        <div class="checkbox"></div>
+                        <span>Requirements gathered and approved</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'phase1Checklist', 'phase1Progress')">
+                        <div class="checkbox"></div>
+                        <span>Technology assessment complete</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'phase1Checklist', 'phase1Progress')">
+                        <div class="checkbox"></div>
+                        <span>Security review conducted</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Phase 2: Testing & Validation</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%;" id="phase2Progress">0%</div>
+                </div>
+                <ul class="checklist" id="phase2Checklist">
+                    <li onclick="toggleCheckWithProgress(this, 'phase2Checklist', 'phase2Progress')">
+                        <div class="checkbox"></div>
+                        <span>OCR engine configured</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'phase2Checklist', 'phase2Progress')">
+                        <div class="checkbox"></div>
+                        <span>Invoice templates developed</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'phase2Checklist', 'phase2Progress')">
+                        <div class="checkbox"></div>
+                        <span>Extraction accuracy tested (>95%)</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'phase2Checklist', 'phase2Progress')">
+                        <div class="checkbox"></div>
+                        <span>Proof of Concept demonstrated to stakeholders</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'phase2Checklist', 'phase2Progress')">
+                        <div class="checkbox"></div>
+                        <span>Go/No-Go decision received</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Phase 3: Implementation</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%;" id="phase3Progress">0%</div>
+                </div>
+                <ul class="checklist" id="phase3Checklist">
+                    <li onclick="toggleCheckWithProgress(this, 'phase3Checklist', 'phase3Progress')">
+                        <div class="checkbox"></div>
+                        <span>Core workflow engine developed</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'phase3Checklist', 'phase3Progress')">
+                        <div class="checkbox"></div>
+                        <span>SAP integration completed</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'phase3Checklist', 'phase3Progress')">
+                        <div class="checkbox"></div>
+                        <span>Error handling implemented</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'phase3Checklist', 'phase3Progress')">
+                        <div class="checkbox"></div>
+                        <span>Dashboard deployed</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'phase3Checklist', 'phase3Progress')">
+                        <div class="checkbox"></div>
+                        <span>UAT sign-off received</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Phase 4: Regional Expansion</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%;" id="phase4Progress">0%</div>
+                </div>
+                <ul class="checklist" id="phase4Checklist">
+                    <li onclick="toggleCheckWithProgress(this, 'phase4Checklist', 'phase4Progress')">
+                        <div class="checkbox"></div>
+                        <span>AP Region requirements gathered</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'phase4Checklist', 'phase4Progress')">
+                        <div class="checkbox"></div>
+                        <span>AP Region localization complete</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'phase4Checklist', 'phase4Progress')">
+                        <div class="checkbox"></div>
+                        <span>AP Region go-live successful</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'phase4Checklist', 'phase4Progress')">
+                        <div class="checkbox"></div>
+                        <span>Brazil requirements gathered</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'phase4Checklist', 'phase4Progress')">
+                        <div class="checkbox"></div>
+                        <span>Brazil deployment complete</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Phase 5: Chatbot Development</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%;" id="phase5Progress">0%</div>
+                </div>
+                <ul class="checklist" id="phase5Checklist">
+                    <li onclick="toggleCheckWithProgress(this, 'phase5Checklist', 'phase5Progress')">
+                        <div class="checkbox"></div>
+                        <span>Data model designed</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'phase5Checklist', 'phase5Progress')">
+                        <div class="checkbox"></div>
+                        <span>NLP models trained</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'phase5Checklist', 'phase5Progress')">
+                        <div class="checkbox"></div>
+                        <span>Integrations developed</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'phase5Checklist', 'phase5Progress')">
+                        <div class="checkbox"></div>
+                        <span>Validation completed (>95% accuracy)</span>
+                    </li>
+                    <li onclick="toggleCheckWithProgress(this, 'phase5Checklist', 'phase5Progress')">
+                        <div class="checkbox"></div>
+                        <span>User training delivered</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
+        
+        <!-- Chatbot Demo Section -->
+        <section id="demo" class="section">
+            <h2><span class="icon">🤖</span> Invoice & PO Chatbot Demo</h2>
+            
+            <div class="card">
+                <div class="card-header">Try the Chatbot</div>
+                <p>Click the chat icon in the bottom-right corner to interact with our Invoice & PO Assistant. The chatbot can answer questions about:</p>
+                <ul>
+                    <li>Invoice status and details</li>
+                    <li>Payment information</li>
+                    <li>Purchase Order budgets</li>
+                    <li>Vendor information</li>
+                    <li>Pending and overdue invoices</li>
+                </ul>
+                <button onclick="toggleChatbot()" class="btn" style="margin-top: 20px;">
+                    💬 Open Chatbot
+                </button>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Sample Invoice Data</div>
+                <p>The chatbot has access to the following sample invoices for demonstration:</p>
+                <table>
+                    <tr>
+                        <th>Invoice Number</th>
+                        <th>Vendor</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Due Date</th>
+                        <th>PO Number</th>
+                        <th>Region</th>
+                    </tr>
+                    <tr>
+                        <td>INV-2025-001</td>
+                        <td>Tech Solutions Ltd</td>
+                        <td>$45,000</td>
+                        <td style="color: #27ae60;">Paid</td>
+                        <td>2025-01-15</td>
+                        <td>PO-2025-100</td>
+                        <td>AP Region</td>
+                    </tr>
+                    <tr>
+                        <td>INV-2025-002</td>
+                        <td>Global Consulting Inc</td>
+                        <td>$75,000</td>
+                        <td style="color: #f39c12;">Pending Approval</td>
+                        <td>2025-01-20</td>
+                        <td>PO-2025-101</td>
+                        <td>AP Region</td>
+                    </tr>
+                    <tr>
+                        <td>INV-2025-003</td>
+                        <td>Office Supplies Co</td>
+                        <td>$3,500</td>
+                        <td style="color: #3498db;">Processing</td>
+                        <td>2025-01-25</td>
+                        <td>PO-2024-998</td>
+                        <td>Brazil</td>
+                    </tr>
+                    <tr>
+                        <td>INV-2025-004</td>
+                        <td>Cloud Services AWS</td>
+                        <td>$12,000</td>
+                        <td style="color: #27ae60;">Paid</td>
+                        <td>2025-01-05</td>
+                        <td>PO-2025-102</td>
+                        <td>Global</td>
+                    </tr>
+                    <tr>
+                        <td>INV-2025-005</td>
+                        <td>Marketing Agency Pro</td>
+                        <td>$25,000</td>
+                        <td style="color: #e74c3c;">On Hold</td>
+                        <td>2025-01-30</td>
+                        <td>PO-2025-103</td>
+                        <td>AP Region</td>
+                    </tr>
+                    <tr>
+                        <td>INV-2024-999</td>
+                        <td>Facilities Management Corp</td>
+                        <td>$15,000</td>
+                        <td style="color: #c0392b;">Overdue</td>
+                        <td>2024-12-31</td>
+                        <td>PO-2024-996</td>
+                        <td>Brazil</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Sample Purchase Orders</div>
+                <p>Available POs in the system:</p>
+                <table>
+                    <tr>
+                        <th>PO Number</th>
+                        <th>Vendor</th>
+                        <th>Total Budget</th>
+                        <th>Used</th>
+                        <th>Remaining</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td>PO-2025-100</td>
+                        <td>Tech Solutions Ltd</td>
+                        <td>$50,000</td>
+                        <td>$45,000</td>
+                        <td>$5,000</td>
+                        <td style="color: #27ae60;">Active</td>
+                    </tr>
+                    <tr>
+                        <td>PO-2025-101</td>
+                        <td>Global Consulting Inc</td>
+                        <td>$300,000</td>
+                        <td>$75,000</td>
+                        <td>$225,000</td>
+                        <td style="color: #27ae60;">Active</td>
+                    </tr>
+                    <tr>
+                        <td>PO-2025-102</td>
+                        <td>Cloud Services AWS</td>
+                        <td>$150,000</td>
+                        <td>$12,000</td>
+                        <td>$138,000</td>
+                        <td style="color: #27ae60;">Active</td>
+                    </tr>
+                    <tr>
+                        <td>PO-2025-103</td>
+                        <td>Marketing Agency Pro</td>
+                        <td>$100,000</td>
+                        <td>$25,000</td>
+                        <td>$75,000</td>
+                        <td style="color: #27ae60;">Active</td>
+                    </tr>
+                    <tr>
+                        <td>PO-2024-998</td>
+                        <td>Office Supplies Co</td>
+                        <td>$20,000</td>
+                        <td>$18,500</td>
+                        <td>$1,500</td>
+                        <td style="color: #f39c12;">Nearly Exhausted</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">Sample Queries to Try</div>
+                <p>Here are some example queries you can ask the chatbot:</p>
+                <ul style="list-style-type: none; padding-left: 0;">
+                    <li style="margin-bottom: 10px;">
+                        <code style="background: #e9ecef; padding: 8px 12px; border-radius: 4px; display: inline-block;">
+                            What is the status of invoice INV-2025-001?
+                        </code>
+                    </li>
+                    <li style="margin-bottom: 10px;">
+                        <code style="background: #e9ecef; padding: 8px 12px; border-radius: 4px; display: inline-block;">
+                            Show pending invoices
+                        </code>
+                    </li>
+                    <li style="margin-bottom: 10px;">
+                        <code style="background: #e9ecef; padding: 8px 12px; border-radius: 4px; display: inline-block;">
+                            Any overdue invoices?
+                        </code>
+                    </li>
+                    <li style="margin-bottom: 10px;">
+                        <code style="background: #e9ecef; padding: 8px 12px; border-radius: 4px; display: inline-block;">
+                            Check PO-2025-100 budget
+                        </code>
+                    </li>
+                    <li style="margin-bottom: 10px;">
+                        <code style="background: #e9ecef; padding: 8px 12px; border-radius: 4px; display: inline-block;">
+                            Show payment status
+                        </code>
+                    </li>
+                    <li style="margin-bottom: 10px;">
+                        <code style="background: #e9ecef; padding: 8px 12px; border-radius: 4px; display: inline-block;">
+                            List all vendors
+                        </code>
+                    </li>
+                </ul>
+                <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 15px; margin-top: 20px;">
+                    <strong>Note:</strong> For non-invoice/PO related questions, the chatbot will respond with: "We could not provide the answer right now, please contact PFA for more clarification."
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <!-- Chatbot Interface -->
+    <div id="chatbot" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+        <div id="chatbot-icon" style="width: 60px; height: 60px; background: linear-gradient(135deg, #3498db, #2ecc71); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.3s ease;">
+            <span style="font-size: 30px; color: white;">💬</span>
+        </div>
+        
+        <div id="chatbot-window" style="display: none; position: absolute; bottom: 80px; right: 0; width: 400px; height: 600px; background: white; border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.15); overflow: hidden;">
+            <div style="background: linear-gradient(135deg, #3498db, #2ecc71); color: white; padding: 20px; position: relative;">
+                <h3 style="margin: 0; font-size: 18px;">Invoice & PO Assistant</h3>
+                <p style="margin: 5px 0 0 0; font-size: 14px; opacity: 0.9;">Ask me about invoices, payments, or POs</p>
+                <button onclick="closeChatbot()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; color: white; font-size: 24px; cursor: pointer;">×</button>
+            </div>
+            
+            <div id="chat-messages" style="height: 420px; overflow-y: auto; padding: 20px; background-color: #f8f9fa;">
+                <div class="bot-message" style="margin-bottom: 15px;">
+                    <div style="background: #e9ecef; padding: 12px 16px; border-radius: 18px; display: inline-block; max-width: 80%;">
+                        <p style="margin: 0; font-size: 14px;">👋 Hello! I'm your Invoice & PO Assistant. I can help you with:</p>
+                        <ul style="margin: 10px 0 0 20px; font-size: 14px;">
+                            <li>Invoice status and details</li>
+                            <li>Payment information</li>
+                            <li>Purchase Order queries</li>
+                            <li>Vendor information</li>
+                        </ul>
+                        <p style="margin: 10px 0 0 0; font-size: 14px;">What would you like to know?</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="padding: 15px; border-top: 1px solid #e9ecef; background: white;">
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="chat-input" placeholder="Type your question..." style="flex: 1; padding: 12px; border: 1px solid #e9ecef; border-radius: 24px; font-size: 14px;" onkeypress="if(event.key === 'Enter') sendMessage()">
+                    <button onclick="sendMessage()" style="background: #3498db; color: white; border: none; padding: 12px 24px; border-radius: 24px; cursor: pointer; font-weight: 500; transition: background 0.3s ease;">Send</button>
+                </div>
+                <div style="margin-top: 10px; display: flex; gap: 5px; flex-wrap: wrap;">
+                    <button class="quick-action" onclick="quickQuery('What is the status of invoice INV-2025-001?')" style="background: #e9ecef; border: none; padding: 6px 12px; border-radius: 16px; font-size: 12px; cursor: pointer; transition: all 0.3s ease;">Invoice Status</button>
+                    <button class="quick-action" onclick="quickQuery('Show pending invoices')" style="background: #e9ecef; border: none; padding: 6px 12px; border-radius: 16px; font-size: 12px; cursor: pointer; transition: all 0.3s ease;">Pending Invoices</button>
+                    <button class="quick-action" onclick="quickQuery('Check PO budget')" style="background: #e9ecef; border: none; padding: 6px 12px; border-radius: 16px; font-size: 12px; cursor: pointer; transition: all 0.3s ease;">PO Budget</button>
+                    <button class="quick-action" onclick="quickQuery('Payment status')" style="background: #e9ecef; border: none; padding: 6px 12px; border-radius: 16px; font-size: 12px; cursor: pointer; transition: all 0.3s ease;">Payments</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        .bot-message, .user-message {
+            margin-bottom: 15px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .user-message {
+            text-align: right;
+        }
+        
+        .user-message > div {
+            background: #3498db;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 18px;
+            display: inline-block;
+            max-width: 80%;
+            text-align: left;
+        }
+        
+        .quick-action:hover {
+            background: #3498db !important;
+            color: white !important;
+            transform: translateY(-2px);
+        }
+        
+        #chatbot-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        .typing-indicator {
+            display: inline-block;
+            padding: 12px 16px;
+            background: #e9ecef;
+            border-radius: 18px;
+        }
+        
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #95a5a6;
+            margin: 0 2px;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+
+    <script>
+        // Mock Invoice and PO Data
+        const mockInvoices = [
+            {
+                invoiceNumber: "INV-2025-001",
+                vendor: "Tech Solutions Ltd",
+                amount: 45000,
+                currency: "USD",
+                status: "Paid",
+                dueDate: "2025-01-15",
+                paymentDate: "2025-01-10",
+                poNumber: "PO-2025-100",
+                description: "Software licenses Q1 2025",
+                region: "AP Region"
+            },
+            {
+                invoiceNumber: "INV-2025-002",
+                vendor: "Global Consulting Inc",
+                amount: 75000,
+                currency: "USD",
+                status: "Pending Approval",
+                dueDate: "2025-01-20",
+                paymentDate: null,
+                poNumber: "PO-2025-101",
+                description: "Consulting services - January",
+                region: "AP Region"
+            },
+            {
+                invoiceNumber: "INV-2025-003",
+                vendor: "Office Supplies Co",
+                amount: 3500,
+                currency: "USD",
+                status: "Processing",
+                dueDate: "2025-01-25",
+                paymentDate: null,
+                poNumber: "PO-2024-998",
+                description: "Office equipment and supplies",
+                region: "Brazil"
+            },
+            {
+                invoiceNumber: "INV-2025-004",
+                vendor: "Cloud Services AWS",
+                amount: 12000,
+                currency: "USD",
+                status: "Paid",
+                dueDate: "2025-01-05",
+                paymentDate: "2025-01-03",
+                poNumber: "PO-2025-102",
+                description: "Cloud hosting - January",
+                region: "Global"
+            },
+            {
+                invoiceNumber: "INV-2025-005",
+                vendor: "Marketing Agency Pro",
+                amount: 25000,
+                currency: "USD",
+                status: "On Hold",
+                dueDate: "2025-01-30",
+                paymentDate: null,
+                poNumber: "PO-2025-103",
+                description: "Q1 Marketing campaign",
+                holdReason: "Missing tax documentation",
+                region: "AP Region"
+            },
+            {
+                invoiceNumber: "INV-2024-998",
+                vendor: "Tech Solutions Ltd",
+                amount: 38000,
+                currency: "USD",
+                status: "Paid",
+                dueDate: "2024-12-15",
+                paymentDate: "2024-12-12",
+                poNumber: "PO-2024-995",
+                description: "Software licenses Q4 2024",
+                region: "AP Region"
+            },
+            {
+                invoiceNumber: "INV-2024-999",
+                vendor: "Facilities Management Corp",
+                amount: 15000,
+                currency: "USD",
+                status: "Overdue",
+                dueDate: "2024-12-31",
+                paymentDate: null,
+                poNumber: "PO-2024-996",
+                description: "Building maintenance - December",
+                region: "Brazil"
+            }
+        ];
+
+        const mockPOs = [
+            {
+                poNumber: "PO-2025-100",
+                vendor: "Tech Solutions Ltd",
+                totalBudget: 50000,
+                usedBudget: 45000,
+                remainingBudget: 5000,
+                status: "Active",
+                validUntil: "2025-03-31",
+                description: "Annual software licensing agreement",
+                approver: "John Smith"
+            },
+            {
+                poNumber: "PO-2025-101",
+                vendor: "Global Consulting Inc",
+                totalBudget: 300000,
+                usedBudget: 75000,
+                remainingBudget: 225000,
+                status: "Active",
+                validUntil: "2025-12-31",
+                description: "Annual consulting services",
+                approver: "Sarah Johnson"
+            },
+            {
+                poNumber: "PO-2025-102",
+                vendor: "Cloud Services AWS",
+                totalBudget: 150000,
+                usedBudget: 12000,
+                remainingBudget: 138000,
+                status: "Active",
+                validUntil: "2025-12-31",
+                description: "Cloud infrastructure services",
+                approver: "Mike Chen"
+            },
+            {
+                poNumber: "PO-2025-103",
+                vendor: "Marketing Agency Pro",
+                totalBudget: 100000,
+                usedBudget: 25000,
+                remainingBudget: 75000,
+                status: "Active",
+                validUntil: "2025-06-30",
+                description: "Marketing and advertising services",
+                approver: "Lisa Wong"
+            },
+            {
+                poNumber: "PO-2024-998",
+                vendor: "Office Supplies Co",
+                totalBudget: 20000,
+                usedBudget: 18500,
+                remainingBudget: 1500,
+                status: "Nearly Exhausted",
+                validUntil: "2025-01-31",
+                description: "Office supplies and equipment",
+                approver: "Tom Davis"
+            }
+        ];
+
+        // Chatbot functionality
+        function toggleChatbot() {
+            const chatWindow = document.getElementById('chatbot-window');
+            const chatIcon = document.getElementById('chatbot-icon');
+            
+            if (chatWindow.style.display === 'none') {
+                chatWindow.style.display = 'block';
+                chatIcon.style.transform = 'scale(0.9)';
+            } else {
+                chatWindow.style.display = 'none';
+                chatIcon.style.transform = 'scale(1)';
+            }
+        }
+
+        function closeChatbot() {
+            document.getElementById('chatbot-window').style.display = 'none';
+            document.getElementById('chatbot-icon').style.transform = 'scale(1)';
+        }
+
+        function quickQuery(query) {
+            document.getElementById('chat-input').value = query;
+            sendMessage();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            // Process message after delay
+            setTimeout(() => {
+                removeTypingIndicator();
+                const response = processQuery(message);
+                addMessage(response, 'bot');
+            }, 800);
+        }
+
+        function addMessage(message, sender) {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = sender === 'user' ? 'user-message' : 'bot-message';
+            
+            const messageContent = document.createElement('div');
+            messageContent.innerHTML = message;
+            messageDiv.appendChild(messageContent);
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const chatMessages = document.getElementById('chat-messages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'bot-message typing-message';
+            typingDiv.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const typingMessage = document.querySelector('.typing-message');
+            if (typingMessage) {
+                typingMessage.remove();
+            }
+        }
+
+        function processQuery(query) {
+            const lowerQuery = query.toLowerCase();
+            
+            // Check if query is about invoices or POs
+            if (!isInvoiceOrPORelated(lowerQuery)) {
+                return "We could not provide the answer right now, please contact PFA for more clarification.";
+            }
+            
+            // Invoice status queries
+            if (lowerQuery.includes('status') && lowerQuery.match(/inv-\d{4}-\d{3}/i)) {
+                const invoiceNum = query.match(/INV-\d{4}-\d{3}/i)[0].toUpperCase();
+                const invoice = mockInvoices.find(inv => inv.invoiceNumber === invoiceNum);
+                
+                if (invoice) {
+                    let response = `📄 <strong>Invoice ${invoice.invoiceNumber}</strong><br><br>`;
+                    response += `Status: <span style="color: ${getStatusColor(invoice.status)}">${invoice.status}</span><br>`;
+                    response += `Vendor: ${invoice.vendor}<br>`;
+                    response += `Amount: ${invoice.amount.toLocaleString()} ${invoice.currency}<br>`;
+                    response += `Due Date: ${invoice.dueDate}<br>`;
+                    
+                    if (invoice.paymentDate) {
+                        response += `Payment Date: ${invoice.paymentDate}<br>`;
+                    }
+                    
+                    if (invoice.holdReason) {
+                        response += `<br>⚠️ Hold Reason: ${invoice.holdReason}`;
+                    }
+                    
+                    return response;
+                }
+                return "Invoice not found. Please check the invoice number and try again.";
+            }
+            
+            // Pending invoices
+            if (lowerQuery.includes('pending')) {
+                const pending = mockInvoices.filter(inv => 
+                    inv.status === 'Pending Approval' || inv.status === 'Processing'
+                );
+                
+                if (pending.length > 0) {
+                    let response = "📋 <strong>Pending Invoices:</strong><br><br>";
+                    pending.forEach(inv => {
+                        response += `• ${inv.invoiceNumber} - ${inv.vendor} - ${inv.amount.toLocaleString()}<br>`;
+                        response += `  Status: ${inv.status} | Due: ${inv.dueDate}<br><br>`;
+                    });
+                    return response;
+                }
+                return "Great news! There are no pending invoices at the moment.";
+            }
+            
+            // Overdue invoices
+            if (lowerQuery.includes('overdue')) {
+                const overdue = mockInvoices.filter(inv => inv.status === 'Overdue');
+                
+                if (overdue.length > 0) {
+                    let response = "⚠️ <strong>Overdue Invoices:</strong><br><br>";
+                    overdue.forEach(inv => {
+                        response += `• ${inv.invoiceNumber} - ${inv.vendor} - ${inv.amount.toLocaleString()}<br>`;
+                        response += `  Due Date: ${inv.dueDate}<br><br>`;
+                    });
+                    return response;
+                }
+                return "No overdue invoices found. All payments are up to date!";
+            }
+            
+            // PO budget queries
+            if (lowerQuery.includes('po') && (lowerQuery.includes('budget') || lowerQuery.includes('remaining'))) {
+                const poMatch = query.match(/PO-\d{4}-\d{3}/i);
+                
+                if (poMatch) {
+                    const poNum = poMatch[0].toUpperCase();
+                    const po = mockPOs.find(p => p.poNumber === poNum);
+                    
+                    if (po) {
+                        let response = `📊 <strong>Purchase Order ${po.poNumber}</strong><br><br>`;
+                        response += `Vendor: ${po.vendor}<br>`;
+                        response += `Total Budget: ${po.totalBudget.toLocaleString()}<br>`;
+                        response += `Used: ${po.usedBudget.toLocaleString()}<br>`;
+                        response += `<strong>Remaining: ${po.remainingBudget.toLocaleString()}</strong><br>`;
+                        response += `Status: <span style="color: ${po.status === 'Active' ? 'green' : 'orange'}">${po.status}</span><br>`;
+                        response += `Valid Until: ${po.validUntil}`;
+                        return response;
+                    }
+                } else {
+                    // Show all POs
+                    let response = "📊 <strong>All Purchase Orders:</strong><br><br>";
+                    mockPOs.forEach(po => {
+                        response += `• ${po.poNumber} - ${po.vendor}<br>`;
+                        response += `  Remaining: ${po.remainingBudget.toLocaleString()} | Status: ${po.status}<br><br>`;
+                    });
+                    return response;
+                }
+            }
+            
+            // Payment status
+            if (lowerQuery.includes('payment') || lowerQuery.includes('paid')) {
+                const paid = mockInvoices.filter(inv => inv.status === 'Paid');
+                const totalPaid = paid.reduce((sum, inv) => sum + inv.amount, 0);
+                
+                let response = "💰 <strong>Payment Summary:</strong><br><br>";
+                response += `Total Paid Invoices: ${paid.length}<br>`;
+                response += `Total Amount Paid: ${totalPaid.toLocaleString()}<br><br>`;
+                response += "<strong>Recent Payments:</strong><br>";
+                
+                paid.slice(0, 3).forEach(inv => {
+                    response += `• ${inv.invoiceNumber} - ${inv.amount.toLocaleString()} - Paid on ${inv.paymentDate}<br>`;
+                });
+                
+                return response;
+            }
+            
+            // Vendor queries
+            if (lowerQuery.includes('vendor')) {
+                const vendors = [...new Set(mockInvoices.map(inv => inv.vendor))];
+                let response = "🏢 <strong>Active Vendors:</strong><br><br>";
+                
+                vendors.forEach(vendor => {
+                    const vendorInvoices = mockInvoices.filter(inv => inv.vendor === vendor);
+                    const totalAmount = vendorInvoices.reduce((sum, inv) => sum + inv.amount, 0);
+                    response += `• ${vendor}<br>`;
+                    response += `  Invoices: ${vendorInvoices.length} | Total: ${totalAmount.toLocaleString()}<br><br>`;
+                });
+                
+                return response;
+            }
+            
+            // Help or general queries
+            if (lowerQuery.includes('help') || lowerQuery.includes('what can you')) {
+                return `I can help you with:<br><br>
+                • 📄 Invoice status (e.g., "What is the status of invoice INV-2025-001?")<br>
+                • 📋 Pending invoices (e.g., "Show pending invoices")<br>
+                • ⚠️ Overdue invoices (e.g., "Any overdue invoices?")<br>
+                • 📊 PO budgets (e.g., "Check PO-2025-100 budget")<br>
+                • 💰 Payment information (e.g., "Show payment status")<br>
+                • 🏢 Vendor details (e.g., "List all vendors")<br><br>
+                Just ask me anything about invoices or purchase orders!`;
+            }
+            
+            // Default response for invoice/PO related but unmatched queries
+            return `I understand you're asking about invoices or purchase orders. Could you please be more specific? For example:<br><br>
+            • "What is the status of invoice INV-2025-001?"<br>
+            • "Show pending invoices"<br>
+            • "Check PO budget for PO-2025-100"<br><br>
+            Type "help" to see all available commands.`;
+        }
+
+        function isInvoiceOrPORelated(query) {
+            const invoiceKeywords = [
+                'invoice', 'inv', 'payment', 'paid', 'pending', 'overdue', 
+                'vendor', 'po', 'purchase order', 'budget', 'amount', 
+                'status', 'due', 'bill', 'billing', 'payable', 'receivable',
+                'help', 'what can you'
+            ];
+            
+            return invoiceKeywords.some(keyword => query.includes(keyword)) || 
+                   query.match(/inv-\d/i) || 
+                   query.match(/po-\d/i);
+        }
+
+        function getStatusColor(status) {
+            const colors = {
+                'Paid': '#27ae60',
+                'Pending Approval': '#f39c12',
+                'Processing': '#3498db',
+                'On Hold': '#e74c3c',
+                'Overdue': '#c0392b'
+            };
+            return colors[status] || '#95a5a6';
+        }
+
+        // Initialize chatbot
+        document.getElementById('chatbot-icon').addEventListener('click', toggleChatbot);
+
+        // Navigation functionality
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all links and sections
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                
+                // Add active class to clicked link and corresponding section
+                this.classList.add('active');
+                const sectionId = this.getAttribute('data-section');
+                document.getElementById(sectionId).classList.add('active');
+            });
+        });
+        
+        // Phase card toggle
+        function togglePhase(element) {
+            element.classList.toggle('expanded');
+        }
+        
+        // Checklist functionality
+        function toggleCheck(element) {
+            const checkbox = element.querySelector('.checkbox');
+            checkbox.classList.toggle('checked');
+            updateProgress();
+        }
+        
+        // Checklist with progress functionality
+        function toggleCheckWithProgress(element, checklistId, progressId) {
+            const checkbox = element.querySelector('.checkbox');
+            checkbox.classList.toggle('checked');
+            
+            const checklist = document.getElementById(checklistId);
+            const checklistItems = checklist.querySelectorAll('li');
+            const checkedItems = checklist.querySelectorAll('.checkbox.checked');
+            const percentage = Math.round((checkedItems.length / checklistItems.length) * 100);
+            
+            const progressBar = document.getElementById(progressId);
+            if (progressBar) {
+                progressBar.style.width = percentage + '%';
+                progressBar.textContent = percentage + '%';
+            }
+            
+            saveChecklistState();
+        }
+        
+        // Update progress bar
+        function updateProgress() {
+            const checklistItems = document.querySelectorAll('#successChecklist li');
+            const checkedItems = document.querySelectorAll('#successChecklist .checkbox.checked');
+            const percentage = Math.round((checkedItems.length / checklistItems.length) * 100);
+            
+            const progressBar = document.getElementById('successProgress');
+            if (progressBar) {
+                progressBar.style.width = percentage + '%';
+                progressBar.textContent = percentage + '%';
+            }
+        }
+        
+        // Search functionality
+        function searchPlaybook() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const sections = document.querySelectorAll('.section');
+            
+            sections.forEach(section => {
+                const text = section.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    section.style.display = 'block';
+                    highlightSearchTerm(section, searchTerm);
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+        }
+        
+        function highlightSearchTerm(element, term) {
+            // Simple highlight function (in production, use a more robust solution)
+            const regex = new RegExp(term, 'gi');
+            element.innerHTML = element.innerHTML.replace(regex, match => `<mark>${match}</mark>`);
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'f') {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+        });
+        
+        // Print functionality
+        window.addEventListener('beforeprint', function() {
+            document.querySelectorAll('.section').forEach(s => s.style.display = 'block');
+        });
+        
+        window.addEventListener('afterprint', function() {
+            document.querySelectorAll('.section').forEach(s => {
+                if (!s.classList.contains('active')) {
+                    s.style.display = 'none';
+                }
+            });
+        });
+        
+        // Initialize tooltips
+        document.querySelectorAll('.tooltip').forEach(tooltip => {
+            tooltip.addEventListener('mouseenter', function() {
+                const tooltipText = this.querySelector('.tooltip-text');
+                if (tooltipText) {
+                    tooltipText.style.visibility = 'visible';
+                    tooltipText.style.opacity = '1';
+                }
+            });
+            
+            tooltip.addEventListener('mouseleave', function() {
+                const tooltipText = this.querySelector('.tooltip-text');
+                if (tooltipText) {
+                    tooltipText.style.visibility = 'hidden';
+                    tooltipText.style.opacity = '0';
+                }
+            });
+        });
+        
+        // Auto-save checklist state to localStorage
+        function saveChecklistState() {
+            const checklistState = {};
+            document.querySelectorAll('.checklist li').forEach((item, index) => {
+                const isChecked = item.querySelector('.checkbox').classList.contains('checked');
+                checklistState[`item_${index}`] = isChecked;
+            });
+            localStorage.setItem('invoicePlaybookChecklist', JSON.stringify(checklistState));
+        }
+        
+        // Load checklist state from localStorage
+        function loadChecklistState() {
+            const savedState = localStorage.getItem('invoicePlaybookChecklist');
+            if (savedState) {
+                const checklistState = JSON.parse(savedState);
+                document.querySelectorAll('.checklist li').forEach((item, index) => {
+                    if (checklistState[`item_${index}`]) {
+                        item.querySelector('.checkbox').classList.add('checked');
+                    }
+                });
+                updateProgress();
+                
+                // Update all progress bars
+                ['phase1', 'phase2', 'phase3', 'phase4', 'phase5', 'preHandover'].forEach(id => {
+                    const checklist = document.getElementById(id + 'Checklist');
+                    const progressBar = document.getElementById(id + 'Progress');
+                    if (checklist && progressBar) {
+                        const checklistItems = checklist.querySelectorAll('li');
+                        const checkedItems = checklist.querySelectorAll('.checkbox.checked');
+                        const percentage = Math.round((checkedItems.length / checklistItems.length) * 100);
+                        progressBar.style.width = percentage + '%';
+                        progressBar.textContent = percentage + '%';
+                    }
+                });
+            }
+        }
+        
+        // Save state when checkboxes are clicked
+        document.querySelectorAll('.checklist li').forEach(item => {
+            item.addEventListener('click', saveChecklistState);
+        });
+        
+        // Load state on page load
+        window.addEventListener('load', loadChecklistState);
+        
+        // Smooth scroll for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                if (href && href !== '#' && href.length > 1) {
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
